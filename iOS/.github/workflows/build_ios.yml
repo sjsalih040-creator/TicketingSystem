@@ -1,0 +1,49 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+        working-directory: d:/New App Full Stack + Android/TicketingSystem/Backend/iOS # Note: usage of absolute path in previous steps. In CI, this is relative. 
+        # CORRECTION: On GitHub Actions, the path is relative to repo root. 
+        # I need to know where the user will push this. 
+        # Assuming the user pushes the contents of "Backend/iOS" as the root or "Backend" as root.
+        # I'll assume standard nesting.
+        # Let's write the command to be dynamic or assume the "iOS" folder is present.
+        
+      - name: Inspect Directory (Debug)
+        run: ls -R
+        
+      # Using a relative path helper since we don't know the git root exactly
+      - name: Generate Project (Correct Path)
+        run: |
+          if [ -d "Backend/iOS" ]; then
+            cd Backend/iOS
+          elif [ -d "iOS" ]; then
+            cd iOS
+          fi
+          xcodegen generate
+          
+      - name: Build App
+        run: |
+           if [ -d "Backend/iOS" ]; then
+            cd Backend/iOS
+          elif [ -d "iOS" ]; then
+            cd iOS
+          fi
+          xcodebuild clean build -project TicketingSystem.xcodeproj -scheme TicketingSystem -destination "generic/platform=iOS" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO

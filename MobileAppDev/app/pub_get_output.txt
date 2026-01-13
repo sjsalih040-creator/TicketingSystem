@@ -1,0 +1,3 @@
+Resolving dependencies...
+Because warehouse_app depends on signalr_net_core any which doesn't exist (could not find package signalr_net_core at https://pub.dev), version solving failed.
+Failed to update packages.

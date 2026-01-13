@@ -1,0 +1,358 @@
+@model Backend.Models.Ticket
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "تفاصيل";
+    
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isAdmin = User.IsInRole("Admin");
+    int? lastCommentId = null;
+    if (currentUserId != null && Model.Comments != null && !isAdmin)
+    {
+         var lastComment = Model.Comments
+            .Where(c => c.AuthorId == currentUserId)
+            .OrderByDescending(c => c.CreatedDate)
+            .FirstOrDefault();
+         if (lastComment != null) lastCommentId = lastComment.Id;
+    }
+}
+
+<h1>تفاصيل</h1>
+
+<div>
+    <h4>التذكرة</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.ProblemType)</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.ProblemType)</dd>
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Description)</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.Description)</dd>
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Status)</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.Status)</dd>
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.CustomerName)</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.CustomerName)</dd>
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.BillNumber)</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.BillNumber)</dd>
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.BillDate)</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.BillDate)</dd>
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Warehouse)</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.Warehouse.Name)</dd>
+        <dt class = "col-sm-2">المنشئ</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.Creator.UserName)</dd>
+        <dt class = "col-sm-2">مسند إلى</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.AssignedTo.UserName)</dd>
+    </dl>
+</div>
+<div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">تعديل</a> <span> | </span>
+    }
+    <a asp-action="Index">العودة للقائمة</a>
+    @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+    {
+        <span> | </span>
+        @if (Model.Status != Backend.Models.TicketStatus.Closed)
+        {
+            <form asp-action="EndTicket" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد أنك تريد إغلاق هذه التذكرة؟')">إغلاق التذكرة</button>
+            </form>
+        }
+    }
+    <a href="javascript:history.back()" class="btn btn-secondary btn-sm ms-2">رجوع</a>
+</div>
+
+<hr />
+<h4>المرفقات</h4>
+@if (Model.Attachments != null)
+{
+    <div class="d-flex flex-wrap gap-3">
+        @foreach (var attachment in Model.Attachments)
+        {
+            <div class="card" style="width: 2in; height: 2in;">
+                <div class="card-img-top d-flex align-items-center justify-content-center bg-light h-100 w-100" style="overflow: hidden; cursor: pointer;" onclick="openLightbox('@attachment.FilePath', '@attachment.FileName', @attachment.Id)">
+                    @if (attachment.FileName.EndsWith(".jpg") || attachment.FileName.EndsWith(".png") || attachment.FileName.EndsWith(".jpeg") || attachment.FileName.EndsWith(".gif"))
+                    {
+                        <img src="@attachment.FilePath" style="width: 100%; height: 100%; object-fit: cover;" alt="@attachment.FileName">
+                    }
+                    else
+                    {
+                        <span class="text-muted text-center p-1" style="font-size: 0.8em; word-break: break-word;">@attachment.FileName</span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<hr />
+<h4>التعليقات</h4>
+@if (Model.Comments != null)
+{
+    foreach (var comment in Model.Comments)
+    {
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1 pe-3">
+                        <p class="card-text" style="white-space: pre-wrap;">@comment.Content</p>
+                        <p class="card-text">
+                            <small class="text-muted">بواسطة @comment.Author.UserName في @comment.CreatedDate</small>
+                            @if (isAdmin)
+                            {
+                                 <span> | </span> <a asp-action="EditComment" asp-route-id="@comment.Id">تعديل</a>
+                                 <span> | </span>
+                                 <form asp-action="DeleteComment" method="post" style="display:inline;">
+                                     @Html.AntiForgeryToken()
+                                     <input type="hidden" name="id" value="@comment.Id" />
+                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد أنك تريد حذف هذا التعليق؟')">حذف</button>
+                                 </form>
+                            }
+                        </p>
+                    </div>
+                    @if (comment.Attachments != null && comment.Attachments.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-2" style="max-width: 60%;">
+                            @foreach (var attachment in comment.Attachments)
+                            {
+                                <div class="card" style="width: 2in; height: 2in;">
+                                    <div class="card-img-top d-flex align-items-center justify-content-center bg-light h-100 w-100" style="overflow: hidden; cursor: pointer;" onclick="openLightbox('@attachment.FilePath', '@attachment.FileName', @attachment.Id)">
+                                        @if (attachment.FileName.EndsWith(".jpg") || attachment.FileName.EndsWith(".png") || attachment.FileName.EndsWith(".jpeg") || attachment.FileName.EndsWith(".gif"))
+                                        {
+                                            <img src="@attachment.FilePath" style="width: 100%; height: 100%; object-fit: cover;" alt="@attachment.FileName">
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted text-center p-1" style="font-size: 0.8em; word-break: break-word;">@attachment.FileName</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<form asp-action="AddComment" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="ticketId" value="@Model.Id" />
+    <div class="form-group">
+        <label for="content">إضافة تعليق</label>
+        <textarea name="content" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="form-group mt-2">
+        <label class="control-label">المرفقات</label>
+        <div id="drop-zone" class="border p-4 text-center" style="border-style: dashed !important; cursor: pointer;">
+            <p>اسحب وأفلت الملفات هنا أو انقر للاختيار</p>
+            <input type="file" name="attachments" multiple class="form-control d-none" id="file-input" />
+        </div>
+        <ul id="file-list" class="list-group mt-2"></ul>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">إرسال</button>
+</form>
+
+<!-- Lightbox Modal -->
+<div class="modal fade" id="lightboxModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="lightboxTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center position-relative" style="height: 80vh; overflow: hidden;">
+                <div id="mediaContainer" style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;">
+                    <img id="lightboxImage" src="" style="max-height: 100%; max-width: 100%; transition: transform 0.2s; display: none;" />
+                    <video id="lightboxVideo" controls style="max-height: 100%; max-width: 100%; display: none;"></video>
+                    <audio id="lightboxAudio" controls style="display: none;"></audio>
+                    <iframe id="lightboxPdf" src="" style="width: 100%; height: 100%; display: none;"></iframe>
+                    <div id="lightboxOther" style="display: none;">
+                        <i class="bi bi-file-earmark" style="font-size: 5rem;"></i>
+                        <p>Unsupported file type. <a id="downloadLinkAlt" href="" download>Download</a></p>
+                    </div>
+                </div>
+                <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
+                    <button class="btn btn-secondary me-2" onclick="zoomIn()"><i class="bi bi-zoom-in">+</i></button>
+                    <button class="btn btn-secondary me-2" onclick="zoomOut()"><i class="bi bi-zoom-out">-</i></button>
+                    <a id="downloadLink" href="" download class="btn btn-primary me-2">تحميل</a>
+                    
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <button class="btn btn-warning me-2" onclick="document.getElementById('replaceInput').click()">استبدال</button>
+                        <form id="replaceForm" asp-action="ReplaceAttachment" method="post" enctype="multipart/form-data" style="display:none;">
+                            <input type="hidden" name="id" id="replaceId" />
+                            <input type="file" name="newFile" id="replaceInput" onchange="document.getElementById('replaceForm').submit()" />
+                        </form>
+                        
+                        <form id="deleteForm" asp-action="DeleteAttachment" method="post" style="display:inline;">
+                            <input type="hidden" name="id" id="deleteId" />
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('هل أنت متأكد؟')">حذف</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Drag & Drop Logic
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('bg-light');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('bg-light');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-light');
+            fileInput.files = e.dataTransfer.files;
+            updateFileList();
+        });
+
+        fileInput.addEventListener('change', updateFileList);
+
+        function updateFileList() {
+            fileList.innerHTML = '';
+            for (let i = 0; i < fileInput.files.length; i++) {
+                const file = fileInput.files[i];
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex align-items-center';
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.style.width = '50px';
+                    img.style.height = '50px';
+                    img.style.objectFit = 'cover';
+                    img.style.marginRight = '10px';
+                    li.appendChild(img);
+                }
+                const span = document.createElement('span');
+                span.textContent = file.name;
+                li.appendChild(span);
+                fileList.appendChild(li);
+            }
+        }
+
+        // Lightbox Logic
+        let currentZoom = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let isDragging = false;
+        let startX, startY;
+        const lightboxModal = new bootstrap.Modal(document.getElementById('lightboxModal'));
+        const lightboxImage = document.getElementById('lightboxImage');
+        const lightboxVideo = document.getElementById('lightboxVideo');
+        const lightboxAudio = document.getElementById('lightboxAudio');
+        const lightboxPdf = document.getElementById('lightboxPdf');
+        const lightboxOther = document.getElementById('lightboxOther');
+        const lightboxTitle = document.getElementById('lightboxTitle');
+        const downloadLink = document.getElementById('downloadLink');
+        const downloadLinkAlt = document.getElementById('downloadLinkAlt');
+        const replaceId = document.getElementById('replaceId');
+        const deleteId = document.getElementById('deleteId');
+
+        function openLightbox(path, name, id) {
+            // Hide all media elements
+            lightboxImage.style.display = 'none';
+            lightboxVideo.style.display = 'none';
+            lightboxAudio.style.display = 'none';
+            lightboxPdf.style.display = 'none';
+            lightboxOther.style.display = 'none';
+
+            lightboxTitle.textContent = name;
+            downloadLink.href = path;
+            downloadLinkAlt.href = path;
+
+            const ext = name.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) {
+                lightboxImage.src = path;
+                lightboxImage.style.display = 'block';
+                currentZoom = 1;
+                translateX = 0;
+                translateY = 0;
+                updateZoom();
+                updateCursor();
+            } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(ext)) {
+                lightboxVideo.src = path;
+                lightboxVideo.style.display = 'block';
+            } else if (['mp3', 'wav', 'ogg', 'aac', 'flac'].includes(ext)) {
+                lightboxAudio.src = path;
+                lightboxAudio.style.display = 'block';
+            } else if (ext === 'pdf') {
+                lightboxPdf.src = path;
+                lightboxPdf.style.display = 'block';
+            } else {
+                lightboxOther.style.display = 'block';
+            }
+
+            if(replaceId) replaceId.value = id;
+            if(deleteId) deleteId.value = id;
+
+            lightboxModal.show();
+        }
+
+        function zoomIn() {
+            currentZoom += 0.25;
+            updateZoom();
+            updateCursor();
+        }
+
+        function zoomOut() {
+            if (currentZoom > 0.25) {
+                currentZoom -= 0.25;
+                updateZoom();
+                updateCursor();
+            }
+        }
+
+        function updateZoom() {
+            lightboxImage.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
+        }
+
+        function updateCursor() {
+            if (currentZoom > 1) {
+                lightboxImage.style.cursor = 'grab';
+            } else {
+                lightboxImage.style.cursor = 'default';
+            }
+        }
+
+        // Pan functionality
+        lightboxImage.addEventListener('mousedown', (e) => {
+            if (currentZoom > 1) {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                lightboxImage.style.cursor = 'grabbing';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging || currentZoom <= 1) return;
+            e.preventDefault();
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateZoom();
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            if (currentZoom > 1) {
+                lightboxImage.style.cursor = 'grab';
+            }
+        });
+    </script>
+}

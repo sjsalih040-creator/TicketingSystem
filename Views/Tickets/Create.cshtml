@@ -1,0 +1,101 @@
+@model Backend.Models.Ticket
+
+@{
+    ViewData["Title"] = "إنشاء";
+}
+
+<h1>إنشاء تذكرة</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProblemType" class="control-label"></label>
+                <input asp-for="ProblemType" class="form-control" />
+                <span asp-validation-for="ProblemType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CustomerName" class="control-label"></label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BillNumber" class="control-label"></label>
+                <input asp-for="BillNumber" class="form-control" />
+                <span asp-validation-for="BillNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BillDate" class="control-label"></label>
+                <input asp-for="BillDate" class="form-control" type="date" />
+                <span asp-validation-for="BillDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WarehouseId" class="control-label">المستودع</label>
+                <select asp-for="WarehouseId" class="form-control" asp-items="ViewBag.WarehouseId"></select>
+                <span asp-validation-for="WarehouseId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">المرفقات</label>
+                <div id="drop-zone" class="border p-4 text-center" style="border-style: dashed !important; cursor: pointer;">
+                    <p>اسحب وأفلت الملفات هنا أو انقر للاختيار</p>
+                    <input type="file" name="attachments" multiple class="form-control d-none" id="file-input" />
+                </div>
+                <ul id="file-list" class="list-group mt-2"></ul>
+            </div>
+            <div class="form-group mt-2">
+                <input type="submit" value="إنشاء" class="btn btn-primary" />
+                <a href="javascript:history.back()" class="btn btn-secondary">رجوع</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">العودة للقائمة</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('bg-light');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('bg-light');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-light');
+            fileInput.files = e.dataTransfer.files;
+            updateFileList();
+        });
+
+        fileInput.addEventListener('change', updateFileList);
+
+        function updateFileList() {
+            fileList.innerHTML = '';
+            for (const file of fileInput.files) {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = file.name;
+                fileList.appendChild(li);
+            }
+        }
+    </script>
+}

@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "لوحة تحكم المسؤول";
+}
+
+<h1>لوحة تحكم المسؤول</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">إدارة المستودعات</h5>
+                <p class="card-text">إضافة، تعديل، أو حذف المستودعات.</p>
+                <a asp-action="Warehouses" class="btn btn-primary">الذهاب للمستودعات</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">إدارة المستخدمين</h5>
+                <p class="card-text">إدارة صلاحيات المستخدمين للمستودعات وإعادة تعيين كلمات المرور.</p>
+                <a asp-action="Users" class="btn btn-primary">الذهاب للمستخدمين</a>
+            </div>
+        </div>
+    </div>
+</div>

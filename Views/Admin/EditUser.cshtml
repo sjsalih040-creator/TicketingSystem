@@ -1,0 +1,43 @@
+@model Backend.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "تعديل صلاحيات المستخدم";
+    var warehouses = ViewBag.Warehouses as List<Backend.Models.Warehouse>;
+}
+
+<h1>تعديل صلاحيات المستخدم</h1>
+
+<h4>@Model.Email</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditUser">
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label class="control-label">المستودعات</label>
+                <select name="selectedWarehouses" class="form-control" multiple>
+                    @foreach (var warehouse in warehouses)
+                    {
+                        bool isSelected = Model.UserWarehouses.Any(uw => uw.WarehouseId == warehouse.Id);
+                        if (isSelected)
+                        {
+                            <option value="@warehouse.Id" selected>@warehouse.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@warehouse.Id">@warehouse.Name</option>
+                        }
+                    }
+                </select>
+                <small class="form-text text-muted">اضغط Ctrl (Windows) أو Command (Mac) لاختيار متعدد.</small>
+            </div>
+            <div class="form-group mt-2">
+                <input type="submit" value="حفظ" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Users">العودة للقائمة</a>
+</div>

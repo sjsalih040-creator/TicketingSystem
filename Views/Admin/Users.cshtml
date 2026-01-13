@@ -1,0 +1,40 @@
+@model IEnumerable<Backend.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "المستخدمين";
+}
+
+<h1>المستخدمين</h1>
+
+<p>
+    <a asp-action="CreateUser" class="btn btn-primary">إنشاء مستخدم جديد</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>البريد الإلكتروني</th>
+            <th>الاسم</th>
+            <th>المستودعات</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+            <td>@item.FirstName @item.LastName</td>
+            <td>
+                @foreach(var uw in item.UserWarehouses)
+                {
+                    <span class="badge bg-secondary">@uw.Warehouse.Name</span>
+                }
+            </td>
+            <td>
+                <a asp-action="EditUser" asp-route-id="@item.Id">تعديل الصلاحيات</a> |
+                <a asp-action="ResetPassword" asp-route-id="@item.Id">إعادة تعيين كلمة المرور</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

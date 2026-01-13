@@ -1,0 +1,94 @@
+Running Gradle task 'assembleRelease'...                        
+lib/screens/ticket_detail_screen.dart:330:37: Error: Can't find ')' to match '('.
+                            Flexible(
+                                    ^
+lib/screens/ticket_detail_screen.dart:314:47: Error: Can't find '}' to match '{'.
+                    ...comments.map((comment) {
+                                              ^
+lib/screens/ticket_detail_screen.dart:189:27: Error: Can't find ']' to match '['.
+                children: [
+                          ^
+lib/screens/ticket_detail_screen.dart:187:30: Error: Can't find ')' to match '('.
+              child: ListView(
+                             ^
+lib/screens/ticket_detail_screen.dart:186:21: Error: Can't find ')' to match '('.
+            Expanded(
+                    ^
+lib/screens/ticket_detail_screen.dart:185:21: Error: Can't find ']' to match '['.
+          children: [
+                    ^
+lib/screens/ticket_detail_screen.dart:184:17: Error: Can't find ')' to match '('.
+        : Column(
+                ^
+lib/screens/ticket_detail_screen.dart:164:22: Error: Can't find ')' to match '('.
+      child: Scaffold(
+                     ^
+lib/screens/ticket_detail_screen.dart:162:27: Error: Can't find ')' to match '('.
+    return GestureDetector(
+                          ^
+lib/screens/home_screen.dart:70:65: Error: Member not found: 'Default'.
+          notificationImportance: AndroidNotificationImportance.Default,
+                                                                ^^^^^^^
+lib/screens/ticket_detail_screen.dart:54:7: Error: The method 'fetchComments' isn't defined for the type '_TicketDetailScreenState'.
+ - '_TicketDetailScreenState' is from 'package:warehouse_app/screens/ticket_detail_screen.dart' ('lib/screens/ticket_detail_screen.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'fetchComments'.
+      fetchComments(),
+      ^^^^^^^^^^^^^
+lib/screens/ticket_detail_screen.dart:55:7: Error: The method 'fetchAttachments' isn't defined for the type '_TicketDetailScreenState'.
+ - '_TicketDetailScreenState' is from 'package:warehouse_app/screens/ticket_detail_screen.dart' ('lib/screens/ticket_detail_screen.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'fetchAttachments'.
+      fetchAttachments(),
+      ^^^^^^^^^^^^^^^^
+lib/screens/ticket_detail_screen.dart:53:23: Error: The argument type 'List<dynamic>' can't be assigned to the parameter type 'Iterable<Future<dynamic>>'.
+ - 'List' is from 'dart:core'.
+ - 'Iterable' is from 'dart:core'.
+ - 'Future' is from 'dart:async'.
+    await Future.wait([
+                      ^
+lib/screens/ticket_detail_screen.dart:85:9: Error: The method 'fetchComments' isn't defined for the type '_TicketDetailScreenState'.
+ - '_TicketDetailScreenState' is from 'package:warehouse_app/screens/ticket_detail_screen.dart' ('lib/screens/ticket_detail_screen.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'fetchComments'.
+        fetchComments(); // Refresh list
+        ^^^^^^^^^^^^^
+lib/screens/ticket_detail_screen.dart:418:13: Error: Expected an identifier, but got 'if'.
+Try inserting an identifier before 'if'.
+            if (_commentFiles.isNotEmpty)
+            ^^
+lib/screens/ticket_detail_screen.dart:330:37: Error: Too many positional arguments: 0 allowed, but 1 found.
+Try removing the extra positional arguments.
+                            Flexible(
+                                    ^
+/C:/src/flutter/packages/flutter/lib/src/widgets/basic.dart:5973:9: Context: Found this candidate, but the arguments don't match.
+  const Flexible({super.key, this.flex = 1, this.fit = FlexFit.loose, required super.child});
+        ^^^^^^^^
+lib/screens/ticket_detail_screen.dart:418:13: Error: Expected ',' before this.
+            if (_commentFiles.isNotEmpty)
+            ^^
+lib/screens/ticket_detail_screen.dart:498:7: Error: Expected ';' after this.
+      ),
+      ^
+lib/screens/ticket_detail_screen.dart:498:8: Error: Expected an identifier, but got ','.
+Try inserting an identifier before ','.
+      ),
+       ^
+lib/screens/ticket_detail_screen.dart:498:8: Error: Unexpected token ';'.
+      ),
+       ^
+Target kernel_snapshot_program failed: Exception
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildRelease'.
+> Process 'command 'C:\src\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 5m 34s
+Running Gradle task 'assembleRelease'...                          336.9s
+Gradle task assembleRelease failed with exit code 1

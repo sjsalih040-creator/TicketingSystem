@@ -1,0 +1,188 @@
+@model IEnumerable<Backend.Models.Ticket>
+
+@{
+    ViewData["Title"] = "التذاكر";
+}
+
+<h1>التذاكر</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">إنشاء تذكرة جديدة</a>
+    <a asp-action="ExportToExcel" class="btn btn-success">تصدير إلى Excel</a>
+</p>
+
+<form asp-controller="Tickets" asp-action="Index" method="get">
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label class="form-label">من تاريخ:</label>
+            <input type="date" name="startDate" class="form-control" value="@ViewData["StartDate"]" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">إلى تاريخ:</label>
+            <input type="date" name="endDate" class="form-control" value="@ViewData["EndDate"]" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">بحث بـ:</label>
+            <select name="searchType" class="form-control">
+                <option value="ProblemType">نوع المشكلة</option>
+                <option value="CustomerName">اسم العميل</option>
+                <option value="BillNumber">رقم الفاتورة</option>
+                <option value="WarehouseName">اسم المستودع</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">كلمة البحث:</label>
+            <input type="text" name="searchString" class="form-control" placeholder="بحث..." value="@Context.Request.Query["searchString"]" />
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <input type="submit" value="بحث" class="btn btn-secondary w-100" />
+        </div>
+    </div>
+</form>
+
+@section Styles {
+    <style>
+        .notification-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 2px solid white;
+            z-index: 10;
+        }
+        .ticket-action-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <script>
+        const currentUserId = "@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)";
+        
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/ticketHub")
+            .build();
+
+        connection.on("NewCommentNotification", function (ticketId, authorId, warehouseId) {
+            if (authorId !== currentUserId) {
+                markTicketAsUnread(ticketId);
+            }
+        });
+
+        connection.on("ticket_created", function (message) {
+             // We can refresh the page or show a generic alert. 
+             // Ideally valid ticket IDs comes here, but for now we reload or hint user.
+             location.reload(); 
+        });
+
+        connection.on("new_ticket", function (message) {
+             location.reload(); 
+        });
+
+        function markTicketAsUnread(ticketId) {
+            const ticketRow = document.querySelector(`tr[data-ticket-id="${ticketId}"]`);
+            if (ticketRow) {
+                const actionCell = ticketRow.querySelector('.ticket-action-wrapper');
+                if (actionCell && !actionCell.querySelector('.notification-badge')) {
+                    const badge = document.createElement('div');
+                    badge.className = 'notification-badge';
+                    badge.innerText = '!';
+                    actionCell.appendChild(badge);
+                    ticketRow.classList.add('fw-bold');
+                }
+            }
+        }
+
+        connection.start().catch(err => console.error(err.toString()));
+    </script>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["ProblemTypeSortParm"]" asp-route-searchString="@Context.Request.Query["searchString"]" asp-route-searchType="@Context.Request.Query["searchType"]">@Html.DisplayNameFor(model => model.ProblemType)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSortParm"]" asp-route-searchString="@Context.Request.Query["searchString"]" asp-route-searchType="@Context.Request.Query["searchType"]">@Html.DisplayNameFor(model => model.Status)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["CustomerNameSortParm"]" asp-route-searchString="@Context.Request.Query["searchString"]" asp-route-searchType="@Context.Request.Query["searchType"]">@Html.DisplayNameFor(model => model.CustomerName)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["BillNumberSortParm"]" asp-route-searchString="@Context.Request.Query["searchString"]" asp-route-searchType="@Context.Request.Query["searchType"]">@Html.DisplayNameFor(model => model.BillNumber)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["BillDateSortParm"]" asp-route-searchString="@Context.Request.Query["searchString"]" asp-route-searchType="@Context.Request.Query["searchType"]">@Html.DisplayNameFor(model => model.BillDate)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["WarehouseSortParm"]" asp-route-searchString="@Context.Request.Query["searchString"]" asp-route-searchType="@Context.Request.Query["searchType"]">@Html.DisplayNameFor(model => model.Warehouse)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["CreatedDateSortParm"]" asp-route-searchString="@Context.Request.Query["searchString"]" asp-route-searchType="@Context.Request.Query["searchType"]">@Html.DisplayNameFor(model => model.CreatedDate)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["CreatorSortParm"]" asp-route-searchString="@Context.Request.Query["searchString"]" asp-route-searchType="@Context.Request.Query["searchType"]">المنشئ</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["AssignedToSortParm"]" asp-route-searchString="@Context.Request.Query["searchString"]" asp-route-searchType="@Context.Request.Query["searchType"]">مسند إلى</a>
+            </th>
+            <th></th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        var unreadIds = ViewBag.UnreadTicketIds as List<int> ?? new List<int>();
+        bool isUnread = unreadIds.Contains(item.Id);
+        <tr data-ticket-id="@item.Id" class="@(item.Status == Backend.Models.TicketStatus.Closed ? "table-success-darker" : "table-danger-darker") @(isUnread ? "fw-bold" : "")">
+            <td>@Html.DisplayFor(modelItem => item.ProblemType)</td>
+            <td>@Html.DisplayFor(modelItem => item.Status)</td>
+            <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
+            <td>@Html.DisplayFor(modelItem => item.BillNumber)</td>
+            <td>@Html.DisplayFor(modelItem => item.BillDate)</td>
+            <td>@Html.DisplayFor(modelItem => item.Warehouse.Name)</td>
+            <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+            <td>@(item.Creator?.Email ?? "N/A")</td>
+            <td>@(item.AssignedTo?.Email ?? "غير محدد")</td>
+            <td>
+                @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">تعديل</a> <span> | </span>
+                }
+                
+                <div class="ticket-action-wrapper">
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">تفاصيل</a>
+                    @if (unreadIds.Contains(item.Id))
+                    {
+                        <div class="notification-badge">!</div>
+                    }
+                </div>
+            </td>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                     <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد من حذف هذه التذكرة؟ هذا الإجراء لا يمكن التراجع عنه.')">حذف</button>
+                    </form>
+                </td>
+            }
+        </tr>
+}
+    </tbody>
+</table>

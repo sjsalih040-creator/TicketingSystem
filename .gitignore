@@ -1,0 +1,29 @@
+# .NET
+bin/
+obj/
+publish/
+*.user
+*.suo
+.vs/
+*.log
+
+# Swift / iOS / Xcode
+iOS/DerivedData/
+*.xcuserstate
+*.xcuserdata
+*.lock
+iOS/TicketingSystem.xcodeproj/project.xcworkspace/xcuserdata/
+iOS/TicketingSystem.xcodeproj/xcuserdata/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and specific artifacts
+build_errors*.txt
+publish_errors.txt
+build_output.txt
+publish.zip
+
+# Node
+node_modules/

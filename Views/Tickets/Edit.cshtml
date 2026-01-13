@@ -1,0 +1,77 @@
+@model Backend.Models.Ticket
+
+@{
+    ViewData["Title"] = "تعديل";
+}
+
+<h1>تعديل التذكرة</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="ProblemType" class="control-label"></label>
+                <input asp-for="ProblemType" class="form-control" />
+                <span asp-validation-for="ProblemType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<Backend.Models.TicketStatus>()"></select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CustomerName" class="control-label"></label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BillNumber" class="control-label"></label>
+                <input asp-for="BillNumber" class="form-control" />
+                <span asp-validation-for="BillNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BillDate" class="control-label"></label>
+                <input asp-for="BillDate" class="form-control" type="date" />
+                <span asp-validation-for="BillDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WarehouseId" class="control-label">المستودع</label>
+                <select asp-for="WarehouseId" class="form-control" asp-items="ViewBag.WarehouseId"></select>
+                <span asp-validation-for="WarehouseId" class="text-danger"></span>
+            </div>
+            
+            @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+            {
+                <div class="form-group">
+                    <label asp-for="AssignedToId" class="control-label">مسند إلى</label>
+                    <select asp-for="AssignedToId" class="form-control" asp-items="ViewBag.AssignedToId">
+                        <option value="">-- اختر المستخدم --</option>
+                    </select>
+                    <span asp-validation-for="AssignedToId" class="text-danger"></span>
+                </div>
+            }
+
+            <div class="form-group mt-2">
+                <input type="submit" value="حفظ" class="btn btn-primary" />
+                <a href="javascript:history.back()" class="btn btn-secondary">رجوع</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">العودة للقائمة</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

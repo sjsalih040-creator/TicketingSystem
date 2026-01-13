@@ -1,0 +1,146 @@
+:root {
+    --bg-body: #121212;
+    --bg-card: #1e1e1e;
+    --text-main: #ffffff;
+    --text-muted: #b0b0b0;
+    --primary-blue: #bb86fc;
+    --sidebar-bg: #1e1e1e;
+    --border-color: #333333;
+}
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--sidebar-bg) !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.navbar-brand {
+    color: #fff !important;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.75) !important;
+    transition: color 0.15s ease-in-out;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    color: #fff !important;
+}
+
+/* Cards */
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    background-color: var(--sidebar-bg);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.btn-primary:hover {
+    background-color: #9c4dcc;
+    border-color: #8b3bb8;
+}
+
+/* Tables */
+.table {
+    color: var(--text-main);
+    background-color: var(--bg-card);
+}
+
+.table thead th {
+    background-color: var(--sidebar-bg);
+    color: var(--text-main);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--border-color);
+}
+
+/* Status Colors (Subtle backgrounds) */
+.table-danger-darker {
+    background-color: #5a1a1a !important;
+    /* Intense dark red */
+}
+
+.table-success-darker {
+    background-color: #1a5a1a !important;
+    /* Intense dark green */
+}
+
+/* Forms */
+.form-control {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.form-control:focus {
+    background-color: var(--bg-card);
+    border-color: var(--primary-blue);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(187, 134, 252, 0.25);
+}
+
+/* Footer */
+footer.footer {
+    background-color: var(--bg-card);
+    border-top: 1px solid var(--border-color) !important;
+    color: var(--text-muted);
+}
+
+footer a {
+    color: var(--text-muted);
+}
+
+footer a:hover {
+    color: var(--primary-blue);
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-main);
+}
+
+/* Links */
+a {
+    color: var(--primary-blue);
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+/* Attachments */
+.attachment-thumbnail {
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+}

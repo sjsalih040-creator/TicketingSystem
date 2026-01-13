@@ -1,0 +1,49 @@
+@model IEnumerable<Backend.Models.Warehouse>
+
+@{
+    ViewData["Title"] = "إدارة المستودعات";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">قائمة المستودعات</h1>
+        <a asp-action="CreateWarehouse" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> إضافة مستودع جديد
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">المستودعات المسجلة</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead class="bg-light text-dark">
+                        <tr>
+                            <th>اسم المستودع</th>
+                            <th class="text-center" style="width: 200px;">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="align-middle fw-bold">@Html.DisplayFor(modelItem => item.Name)</td>
+                                <td class="text-center">
+                                    <a asp-action="EditWarehouse" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                        تعديل الاسم <i class="fas fa-edit"></i>
+                                    </a>
+                                    <span class="mx-1">|</span>
+                                    <a asp-action="DeleteWarehouse" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                                        حذف <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

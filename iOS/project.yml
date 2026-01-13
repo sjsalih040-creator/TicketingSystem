@@ -1,0 +1,17 @@
+name: TicketingSystem
+options:
+  bundleIdPrefix: com.ticketing
+  deploymentTarget:
+    iOS: 15.0
+targets:
+  TicketingSystem:
+    type: application
+    platform: iOS
+    sources:
+      - path: TicketingSystem
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ticketing.warehouse
+        Marketing_Version: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
+        INFOPLIST_FILE: TicketingSystem/Info.plist
