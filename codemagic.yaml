@@ -17,7 +17,7 @@ workflows:
           cd iOS
           # Build the app using xcodebuild. 
           # We disable code signing for now to ensure it builds without certificates.
-          xcodebuild build -project TicketingSystem.xcodeproj -scheme TicketingSystem -sdk iphoneos CODE_SIGNING_ALLOWED=NO
+          xcodebuild build -project TicketingSystem.xcodeproj -scheme TicketingSystem -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
     artifacts:
       - iOS/build/Release-iphoneos/*.app
       - /tmp/xcodebuild_logs/*.log

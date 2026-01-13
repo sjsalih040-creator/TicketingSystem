@@ -14,4 +14,6 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ticketing.warehouse
         Marketing_Version: 1.0.0
         CURRENT_PROJECT_VERSION: 1
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
         INFOPLIST_FILE: TicketingSystem/Info.plist
