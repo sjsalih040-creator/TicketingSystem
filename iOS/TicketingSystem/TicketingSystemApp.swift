@@ -16,6 +16,8 @@ struct TicketingSystemApp: App {
                 }
             }
             .preferredColorScheme(themeManager.currentTheme.colorScheme)
+            .environment(\.locale, Locale(identifier: "ar"))
+            .environment(\.layoutDirection, .rightToLeft)
         }
     }
 }
