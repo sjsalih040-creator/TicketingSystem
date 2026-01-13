@@ -15,18 +15,18 @@ workflows:
       - name: Build iOS App
         script: |
           cd iOS
-          # Debug: List available destinations to the log
-          xcodebuild -project TicketingSystem.xcodeproj -scheme TicketingSystem -showdestinations
-          
-          # Build using a generic simulator destination
-          # This is the most compatible way to build for "any" simulator
-          xcodebuild build \
+          # Build using the generic simulator destination.
+          # ONLY_ACTIVE_ARCH=YES ensures it only builds for the architecture of the build machine (arm64 for M2).
+          xcodebuild clean build \
             -project TicketingSystem.xcodeproj \
             -scheme TicketingSystem \
             -destination "generic/platform=iOS Simulator" \
+            -configuration Debug \
+            ONLY_ACTIVE_ARCH=YES \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CONFIGURATION_BUILD_DIR=build
+
 
     artifacts:
       - iOS/build/*.app
