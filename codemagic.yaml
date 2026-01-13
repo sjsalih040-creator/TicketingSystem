@@ -12,17 +12,12 @@ workflows:
         script: |
           cd iOS
           xcodegen generate
-      - name: Initialize Pods (if needed) and Update
+      - name: Build iOS App
         script: |
           cd iOS
-          # If you have a Podfile, uncomment below:
-          # pod install
-    building:
-      xcode:
-        project: iOS/TicketingSystem.xcodeproj
-        scheme: TicketingSystem
-        method: development
+          # Build the app using xcodebuild. 
+          # We disable code signing for now to ensure it builds without certificates.
+          xcodebuild build -project TicketingSystem.xcodeproj -scheme TicketingSystem -sdk iphoneos CODE_SIGNING_ALLOWED=NO
     artifacts:
-      - build/ios/ipa/*.ipa
+      - iOS/build/Release-iphoneos/*.app
       - /tmp/xcodebuild_logs/*.log
-      - iOS/*.xcodeproj  # Optional: to see the generated project
