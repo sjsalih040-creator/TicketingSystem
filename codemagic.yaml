@@ -15,8 +15,18 @@ workflows:
       - name: Build iOS App
         script: |
           cd iOS
-          # Build for Simulator using a more generic destination to avoid "device not found" errors.
-          xcodebuild build -project TicketingSystem.xcodeproj -scheme TicketingSystem -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 13' CODE_SIGNING_ALLOWED=NO
+          # Find the first available iOS Simulator ID from the list provided by the environment
+          SIM_ID=$(xcrun xctrace list devices | grep "Simulator" | grep -v "Apple Watch" | grep -v "Apple TV" | head -n 1 | awk '{print $NF}' | tr -d '()')
+          echo "Selected Simulator ID: $SIM_ID"
+          
+          # Build using the dynamic ID
+          xcodebuild build \
+            -project TicketingSystem.xcodeproj \
+            -scheme TicketingSystem \
+            -sdk iphonesimulator \
+            -destination "id=$SIM_ID" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO
     artifacts:
       - iOS/build/Release-iphonesimulator/*.app
       - /tmp/xcodebuild_logs/*.log
