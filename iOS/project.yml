@@ -2,7 +2,7 @@ name: TicketingSystem
 options:
   bundleIdPrefix: com.ticketing
   deploymentTarget:
-    iOS: 16.0
+    iOS: 17.0
 targets:
   TicketingSystem:
     type: application
