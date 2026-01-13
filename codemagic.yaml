@@ -1,0 +1,28 @@
+workflows:
+  ios-native-build:
+    name: iOS Native Build
+    environment:
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Install XcodeGen
+        script: |
+          brew install xcodegen
+      - name: Generate Xcode Project
+        script: |
+          cd iOS
+          xcodegen generate
+      - name: Initialize Pods (if needed) and Update
+        script: |
+          cd iOS
+          # If you have a Podfile, uncomment below:
+          # pod install
+    building:
+      xcode:
+        project: iOS/TicketingSystem.xcodeproj
+        scheme: TicketingSystem
+        method: development
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - iOS/*.xcodeproj  # Optional: to see the generated project
