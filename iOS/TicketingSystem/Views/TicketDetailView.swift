@@ -275,9 +275,7 @@ struct CommentRow: View {
                 Text(comment.content)
                     .padding(10)
                     .background(isMe ? Color.orange.opacity(0.2) : Color.gray.opacity(0.2))
-                    .cornerRadius(12)
-                    .cornerRadius(isMe ? 0 : 12, corners: .bottomRight)
-                    .cornerRadius(!isMe ? 0 : 12, corners: .bottomLeft)
+                    .cornerRadius(12.0, corners: isMe ? [.topLeft, .bottomLeft, .topRight] : [.topRight, .bottomRight, .topLeft]) 
                 
                 Text(comment.createdDate.components(separatedBy: "T").last?.prefix(5) ?? "")
                     .font(.caption2)

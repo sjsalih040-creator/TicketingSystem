@@ -1,7 +1,7 @@
 import Foundation
 
 struct Attachment: Identifiable, Codable {
-    let id: Int? // Optional because sometimes it's just a file path from server without ID
+    var id: String { filePath }
     let fileName: String
     let filePath: String
     let fileType: String // e.g. "image/jpeg", "application/pdf"
