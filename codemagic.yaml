@@ -15,9 +15,9 @@ workflows:
       - name: Build iOS App
         script: |
           cd iOS
-          # Build the app using xcodebuild. 
-          # We disable code signing for now to ensure it builds without certificates.
-          xcodebuild build -project TicketingSystem.xcodeproj -scheme TicketingSystem -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          # Build for Simulator to bypass code signing requirements (since we don't have certs).
+          # This verifies the code compiles and produces an .app capable of running in a simulator.
+          xcodebuild build -project TicketingSystem.xcodeproj -scheme TicketingSystem -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest' CODE_SIGNING_ALLOWED=NO
     artifacts:
-      - iOS/build/Release-iphoneos/*.app
+      - iOS/build/Release-iphonesimulator/*.app
       - /tmp/xcodebuild_logs/*.log
