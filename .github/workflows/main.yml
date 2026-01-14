@@ -5,9 +5,24 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - run: flutter pub get
-      - run: flutter build ios --release --no-codesign
-      
+
+      - name: Install Dependencies
+        run: |
+          cd MobileAppDev/app
+          flutter pub get
+
+      - name: Build iOS
+        run: |
+          cd MobileAppDev/app
+          flutter build ios --release --no-codesign
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app-bundle
+          path: MobileAppDev/app/build/ios/iphoneos/*.app
